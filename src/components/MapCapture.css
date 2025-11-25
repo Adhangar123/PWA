@@ -1,0 +1,99 @@
+/* WRAPPER */
+.map-wrapper {
+  width: 100%;
+  height: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  margin-top: 15px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative; /* Important */
+}
+
+/* MAP BOX */
+.map-container {
+  width: 100%;
+  height: 400px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+
+  /* FIX: preventing zoom control overlap */
+  position: relative;
+  z-index: 1;
+}
+
+/* FIX: Zoom buttons ko top-left par safe jagah dena */
+.leaflet-control-container .leaflet-top.leaflet-left {
+  margin-top: 12px !important;
+  margin-left: 12px !important;
+}
+
+/* CONTROLS BELOW MAP */
+.map-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8faf8;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #dce5dc;
+  z-index: 10; /* FIX: buttons ALWAYS above map */
+}
+
+/* BUTTON COMMON */
+.map-controls button {
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  background: #0b8a55;
+  color: white;
+}
+
+/* DISABLED BUTTON */
+.map-controls button:disabled {
+  background: #bfbfbf !important;
+  cursor: not-allowed;
+}
+
+/* SAVE BUTTON BLUE */
+.save-btn {
+  background: #0077ff !important;
+}
+
+/* EDIT BUTTON ORANGE */
+.edit-btn {
+  background: #e67e22 !important;
+}
+
+/* AREA BOX */
+.area-display {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+  .map-container {
+    height: 300px;
+  }
+  .map-controls button {
+    font-size: 15px;
+    padding: 12px;
+  }
+  .area-display {
+    font-size: 15px;
+    padding: 10px;
+  }
+}

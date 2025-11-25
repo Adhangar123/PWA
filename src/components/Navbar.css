@@ -1,0 +1,54 @@
+.simple-navbar {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fdffdb;
+  color: #ff863f;
+  padding: 12px 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+/* Logo */
+.simple-navbar-logo img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Help Button */
+.simple-help-btn {
+  background: white;
+  color: #f17527;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;   /* text break nahi hoga */
+}
+
+.simple-help-btn:hover {
+  opacity: 0.9;
+}
+
+/* 🔥 Mobile Responsive */
+@media (max-width: 500px) {
+  .simple-navbar {
+    padding: 10px 12px;
+  }
+
+  .simple-navbar-logo img {
+    height: 28px;
+  }
+
+  .simple-help-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}

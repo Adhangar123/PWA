@@ -1,0 +1,98 @@
+/* ===========================
+   FORM WRAPPER
+============================== */
+.form-wrapper {
+  padding: 15px;
+  max-width: 600px;
+  margin: auto;
+}
+
+/* Form Title */
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+/* ===========================
+   FORM FIELDS
+============================== */
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.field input,
+.field select {
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 4px rgba(52,152,219,0.4);
+}
+
+/* File input */
+.field input[type="file"] {
+  padding: 10px;
+  background: #fafafa;
+}
+
+/* ===========================
+   SUBMIT BUTTON
+============================== */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: 0.2s;
+}
+
+.submit-btn:disabled {
+  background: #9ccc9c;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   RESET BUTTON
+============================== */
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.reset-btn:hover {
+  background: #c0392b;
+}
