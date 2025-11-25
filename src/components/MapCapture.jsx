@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapCapture.css";
@@ -16,7 +16,8 @@ export default function MapCapture({
 
   const rad = (deg) => (deg * Math.PI) / 180;
 
-  const calculateArea = (pts) => {
+  // ✅ FIX: Wrapped calculateArea in useCallback
+  const calculateArea = useCallback((pts) => {
     if (pts.length < 3) return 0;
 
     const R = 6378137;
@@ -32,8 +33,9 @@ export default function MapCapture({
     }
 
     return Math.abs((total * R * R) / 2);
-  };
+  }, []);
 
+  // MAP INIT — fine
   useEffect(() => {
     if (!mapRef.current) {
       mapRef.current = L.map("capture-map", {
@@ -51,6 +53,7 @@ export default function MapCapture({
     }
   }, []);
 
+  // MAIN EFFECT — area + polygon update
   useEffect(() => {
     if (!mapRef.current) return;
 
@@ -71,8 +74,9 @@ export default function MapCapture({
     }
 
     setArea(calculateArea(points));
-  }, [points, polygonSaved]);
+  }, [points, polygonSaved, calculateArea, setArea]);
 
+  // Capture GPS point
   const capturePoint = () => {
     if (polygonSaved) {
       alert("Polygon already saved! Reset to edit again.");
