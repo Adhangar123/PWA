@@ -1,3 +1,6 @@
+/* eslint-disable no-restricted-globals */
+
+// Background Sync Listener
 self.addEventListener('sync', event => {
   if (event.tag === 'sync-farmers') {
     event.waitUntil(notifyClientsToSync());
