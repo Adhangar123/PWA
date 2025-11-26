@@ -13,6 +13,7 @@ export default function MapCapture({
 }) {
   const mapRef = useRef(null);
   const polygonRef = useRef(null);
+  const lineRef = useRef(null); // 🔥 breadcrumb line
 
   const rad = (deg) => (deg * Math.PI) / 180;
 
@@ -34,7 +35,7 @@ export default function MapCapture({
     return Math.abs((total * R * R) / 2);
   }, []);
 
-  // MAP INIT
+  // INIT MAP
   useEffect(() => {
     if (!mapRef.current) {
       mapRef.current = L.map("capture-map", {
@@ -50,17 +51,33 @@ export default function MapCapture({
     }
   }, []);
 
-  // DRAW POLYGON WHEN SAVED
+  // 🔥 DRAW POLYGON + BREADCRUMB ON EVERY UPDATE
   useEffect(() => {
     if (!mapRef.current) return;
 
+    // --- REMOVE OLD POLYGON ---
     if (polygonRef.current) {
       mapRef.current.removeLayer(polygonRef.current);
     }
 
-    if (polygonSaved && points.length >= 3) {
+    // --- REMOVE OLD LINE ---
+    if (lineRef.current) {
+      mapRef.current.removeLayer(lineRef.current);
+    }
+
+    // ----- BREADCRUMB LINE (always show if ≥ 2 points) -----
+    if (points.length >= 2) {
+      lineRef.current = L.polyline(points, {
+        color: "orange",
+        weight: 3,
+        dashArray: "5,5",
+      }).addTo(mapRef.current);
+    }
+
+    // ----- POLYGON (only if ≥ 3 points) -----
+    if (points.length >= 3) {
       polygonRef.current = L.polygon(points, {
-        color: "blue",
+        color: "green",
         weight: 2,
         fillOpacity: 0.3,
       }).addTo(mapRef.current);
@@ -71,9 +88,9 @@ export default function MapCapture({
     }
 
     setArea(calculateArea(points));
-  }, [polygonSaved, points, calculateArea, setArea]);
+  }, [points, calculateArea, setArea]);
 
-  // CAPTURE POINT FUNCTION
+  // CAPTURE POINT
   const capturePoint = () => {
     if (points.length >= 50) {
       alert("Maximum 50 GPS points allowed.");
@@ -82,59 +99,55 @@ export default function MapCapture({
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const p = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        };
-        setPoints((prev) => [...prev, p]);
+        setPoints((prev) => [
+          ...prev,
+          { lat: pos.coords.latitude, lng: pos.coords.longitude },
+        ]);
       },
       (err) => alert("GPS error: " + err.message),
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
-  // SHOW POLYGON BUTTON CLICK
-  const showPolygon = () => {
+  // SAVE POLYGON
+  const savePolygon = () => {
     if (points.length < 3) {
-      alert("Minimum 3 points required to draw polygon.");
+      alert("Minimum 3 points required to save polygon.");
       return;
     }
+
     setPolygonSaved(true);
+    alert("Polygon saved successfully!");
   };
 
-  // RESET ALL
+  // RESET
   const resetPolygon = () => {
     setPoints([]);
-    setPolygonSaved(false);
     setArea(0);
+    setPolygonSaved(false);
   };
 
   return (
     <div className="map-wrapper">
-      {/* MAP */}
       <div id="capture-map" className="map-container"></div>
 
-      {/* CONTROLS */}
       <div className="map-controls">
-        <button onClick={capturePoint} disabled={polygonSaved}>
+        <button onClick={capturePoint}>
           📍 Capture Point ({points.length}/50)
         </button>
 
-        {!polygonSaved ? (
-          <button
-            className="save-btn"
-            disabled={points.length < 3}
-            onClick={showPolygon}
-          >
-            👀 Show Polygon
-          </button>
-        ) : (
-          <button className="edit-btn" onClick={resetPolygon}>
-            ✏️ Edit Polygon
-          </button>
-        )}
+        <button
+          className="save-btn"
+          disabled={points.length < 3}
+          onClick={savePolygon}
+        >
+          💾 Save Polygon
+        </button>
 
-        {/* AREA DISPLAY */}
+        <button className="edit-btn" onClick={resetPolygon}>
+          ✏️ Reset Polygon
+        </button>
+
         <div className="area-display">
           <strong>Area: </strong>
           {area > 0 ? (area / 10000).toFixed(4) + " Ha" : "—"}
