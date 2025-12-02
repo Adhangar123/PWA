@@ -1,88 +1,178 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
-import { saveOfflineRecord } from "../utils/offline";
 import MapCapture from "./MapCapture";
 import "./OnboardForm.css";
 
-export default function OnboardForm({ onSaved }) {
-  const { register, handleSubmit, reset } = useForm();
+export default function OnboardForm() {
+  const { register, getValues } = useForm();
 
   const [points, setPoints] = useState([]);
   const [area, setArea] = useState(0);
-  const [file, setFile] = useState(null);
   const [polygonSaved, setPolygonSaved] = useState(false);
 
-  const onSubmit = async (data) => {
-    if (!polygonSaved) {
-      alert("Please save boundary polygon first!");
-      return;
+  // FILES
+  const [photo, setPhoto] = useState(null);
+  const [agreement, setAgreement] = useState(null);
+  const [aadharCard, setAadharCard] = useState(null);
+
+  // ------------------------------------------------------
+  // FINAL SUBMIT (curl ke exact field names)
+  // ------------------------------------------------------
+  const finalSubmit = async () => {
+    const f = getValues();
+    const formData = new FormData();
+
+    // TEXT FIELDS (curl ke same name)
+    formData.append("farmerName", f.farmerName || "");
+    formData.append("fatherName", f.fatherName || "");
+    formData.append("contact", f.contact || "");
+    formData.append("age", f.age || "");
+    formData.append("gender", f.gender || "");
+    formData.append("state", f.state || "");
+    formData.append("district", f.district || "");
+    formData.append("village", f.village || "");
+    formData.append("landArea", f.landArea || "");
+    formData.append("surveyNumber", f.surveyNumber || "");
+    formData.append("cropType", f.cropType || "");
+    formData.append("irrigationSource", f.irrigationSource || "");
+    formData.append("notes", f.notes || "");
+
+    // FILES (curl: photo, aadharCard, agreement)
+    if (photo) formData.append("photo", photo);
+    if (aadharCard) formData.append("aadharCard", aadharCard);
+    if (agreement) formData.append("agreement", agreement);
+
+    // GPS POINTS (curl: latitude[] & longitude[])
+    points.forEach((p) => {
+      formData.append("latitude[]", p.lat);
+      formData.append("longitude[]", p.lng);
+    });
+
+    try {
+      const res = await fetch("https://new-survey-zh0e.onrender.com/api/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const responseText = await res.text();
+      console.log("SERVER:", responseText);
+
+      if (!res.ok) {
+        alert("❌ API ERROR: " + res.status);
+        return;
+      }
+
+      alert("🎉 Data Submitted Successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Submission Failed.");
     }
-
-    const record = {
-      id: uuidv4(),
-      ...data,
-      num_trees: Number(data.num_trees || 0),
-      boundary_points: points,
-      area_sq_m: area,
-      area_hectare: area / 10000,
-      created_at: new Date().toISOString(),
-      status: "pending",
-      attachments: file
-        ? [
-            {
-              id: uuidv4(),
-              filename: file.name,
-              mime: file.type,
-              blob: file,
-            },
-          ]
-        : [],
-    };
-
-    await saveOfflineRecord(record);
-
-    reset();
-    setPoints([]);
-    setArea(0);
-    setPolygonSaved(false);
-    setFile(null);
-
-    if (onSaved) onSaved();
-    alert("Saved locally!");
   };
 
   return (
     <div className="form-wrapper">
       <h2 className="title">🌾 Farmer Onboarding</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      {/* ------------------- FARMER INFORMATION ------------------- */}
+      <div className="section-box">
+        <h3 className="section-title">Farmer Information</h3>
+
+        <div className="fields-grid">
+          <div className="field">
+            <label>Farmer Name</label>
+            <input {...register("farmerName")} />
+          </div>
+
+          <div className="field">
+            <label>Father Name</label>
+            <input {...register("fatherName")} />
+          </div>
+
+          <div className="field">
+            <label>Contact</label>
+            <input {...register("contact")} />
+          </div>
+
+          <div className="field">
+            <label>Age</label>
+            <input type="number" {...register("age")} />
+          </div>
+
+          <div className="field">
+            <label>Gender</label>
+            <select {...register("gender")}>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+
+          <div className="field">
+            <label>State</label>
+            <input {...register("state")} />
+          </div>
+
+          <div className="field">
+            <label>District</label>
+            <input {...register("district")} />
+          </div>
+
+          <div className="field">
+            <label>Village</label>
+            <input {...register("village")} />
+          </div>
+
+          <div className="field">
+            <label>Land Area</label>
+            <input type="number" {...register("landArea")} />
+          </div>
+
+          <div className="field">
+            <label>Survey Number</label>
+            <input {...register("surveyNumber")} />
+          </div>
+
+          <div className="field">
+            <label>Crop Type</label>
+            <input {...register("cropType")} />
+          </div>
+
+          <div className="field">
+            <label>Irrigation Source</label>
+            <input {...register("irrigationSource")} />
+          </div>
+
+          <div className="field full-width">
+            <label>Notes</label>
+            <textarea {...register("notes")} />
+          </div>
+        </div>
+      </div>
+
+      {/* ------------------- UPLOAD DOCUMENTS ------------------- */}
+      <div className="section-box">
+        <h3 className="section-title">Upload Documents</h3>
+
         <div className="field">
-          <label>Farmer Name</label>
-          <input {...register("name", { required: true })} />
+          <label>Farmer Photo</label>
+          <input type="file" onChange={(e) => setPhoto(e.target.files[0])} />
         </div>
 
         <div className="field">
-          <label>Phone</label>
-          <input {...register("phone")} />
+          <label>Aadhar Card</label>
+          <input type="file" onChange={(e) => setAadharCard(e.target.files[0])} />
         </div>
 
         <div className="field">
-          <label>Species</label>
-          <select {...register("species")}>
-            <option value="mango">Mango</option>
-            <option value="teak">Teak</option>
-            <option value="acacia">Acacia</option>
-            <option value="other">Other</option>
-          </select>
+          <label>Agreement Letter</label>
+          <input type="file" onChange={(e) => setAgreement(e.target.files[0])} />
         </div>
+      </div>
 
-        <div className="field">
-          <label>No. of Trees</label>
-          <input type="number" {...register("num_trees")} />
-        </div>
+      {/* ------------------- MAP SECTION ------------------- */}
+      <div className="section-box">
+        <h3 className="section-title">Capture Boundary</h3>
 
-        {/* MAP AREA */}
         <MapCapture
           points={points}
           setPoints={setPoints}
@@ -91,34 +181,12 @@ export default function OnboardForm({ onSaved }) {
           polygonSaved={polygonSaved}
           setPolygonSaved={setPolygonSaved}
         />
+      </div>
 
-        <div className="field">
-          <label>Attachment (optional)</label>
-          <input
-            type="file"
-            accept="image/*,application/pdf"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-        </div>
-
-        <button type="submit" className="submit-btn" disabled={!polygonSaved}>
-          💾 Save Locally
-        </button>
-
-        <button
-          type="button"
-          className="reset-btn"
-          onClick={() => {
-            reset();
-            setPoints([]);
-            setArea(0);
-            setPolygonSaved(false);
-            setFile(null);
-          }}
-        >
-          Reset All
-        </button>
-      </form>
+      {/* ------------------- SUBMIT BUTTON ------------------- */}
+      <button className="submit-btn" onClick={finalSubmit}>
+        ✔ Submit All Data
+      </button>
     </div>
   );
 }

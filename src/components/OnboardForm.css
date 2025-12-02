@@ -1,98 +1,151 @@
-/* ===========================
-   FORM WRAPPER
-============================== */
+/* ----------- MAIN WRAPPER ----------- */
 .form-wrapper {
-  padding: 15px;
-  max-width: 600px;
+  max-width: 900px;
   margin: auto;
+  padding: 25px;
+  background: #f5f7fa;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+  font-family: "Poppins", sans-serif;
 }
 
-/* Form Title */
 .title {
   text-align: center;
-  font-size: 22px;
+  font-size: 32px;
+  color: #2b7a0b;
+  margin-bottom: 25px;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: #2c3e50;
 }
 
-/* ===========================
-   FORM FIELDS
-============================== */
+/* ----------- SECTION BOX ----------- */
+.section-box {
+  background: #ffffff;
+  padding: 20px 25px;
+  margin-bottom: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1c4e1c;
+  border-left: 6px solid #2b7a0b;
+  padding-left: 10px;
+}
+
+/* ----------- GRID (2 COLUMNS FOR INPUT FIELDS) ----------- */
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 25px;
+}
+
+/* Make Notes full width */
+.full-width {
+  grid-column: span 2;
+}
+
+/* ----------- INPUT FIELDS ----------- */
 .field {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
 }
 
 .field label {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 5px;
-  color: #444;
+  color: #333;
 }
 
 .field input,
+.field textarea,
 .field select {
-  padding: 12px;
-  font-size: 15px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  outline: none;
+  background: #fdfdfd;
   transition: 0.2s;
 }
 
 .field input:focus,
+.field textarea:focus,
 .field select:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 4px rgba(52,152,219,0.4);
+  border-color: #2b7a0b;
+  box-shadow: 0 0 5px rgba(43, 122, 11, 0.3);
+  outline: none;
 }
 
-/* File input */
-.field input[type="file"] {
-  padding: 10px;
-  background: #fafafa;
+/* Textarea styling */
+.field textarea {
+  resize: vertical;
+  height: 70px;
 }
 
-/* ===========================
-   SUBMIT BUTTON
-============================== */
+/* ----------- BUTTONS ----------- */
 .submit-btn {
   width: 100%;
-  padding: 14px;
-  background: #27ae60;
-  color: white;
+  padding: 12px;
+  background: #2b7a0b;
   border: none;
-  border-radius: 12px;
-  font-size: 17px;
-  font-weight: bold;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 10px;
   cursor: pointer;
-  margin-top: 15px;
+  margin: 10px 0;
   transition: 0.2s;
 }
 
-.submit-btn:disabled {
-  background: #9ccc9c;
-  cursor: not-allowed;
+.submit-btn:hover {
+  background: #1e5e08;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
 }
 
-/* ===========================
-   RESET BUTTON
-============================== */
 .reset-btn {
   width: 100%;
   padding: 12px;
-  background: #e74c3c;
-  color: white;
+  background: #ccc;
   border: none;
-  border-radius: 12px;
-  font-size: 15px;
+  color: #333;
+  font-size: 16px;
   font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
+  margin: 10px 0;
   transition: 0.2s;
 }
 
 .reset-btn:hover {
-  background: #c0392b;
+  background: #b4b4b4;
+}
+
+/* ----------- ANIMATION ----------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------- RESPONSIVE ----------- */
+@media (max-width: 700px) {
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .section-box {
+    padding: 15px;
+  }
 }

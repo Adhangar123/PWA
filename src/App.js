@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import OnboardForm from "./components/OnboardForm";
+import Help from "./components/Help";   // ← ADD THIS
 import { getPending } from "./utils/offline";
 
 function App() {
@@ -32,39 +35,52 @@ function App() {
   }
 
   return (
-    <>
+    <Router>
       <Navbar />
 
-      <div className="main-container">
-        <div className="form-card">
-          <h2>Farmer Registration Form</h2>
-          <p className="status">
-            Status: {navigator.onLine ? "Online" : "Offline"}
-          </p>
+      <Routes>
+        {/* MAIN FORM PAGE */}
+        <Route
+          path="/"
+          element={
+            <>
+              <div className="main-container">
+                <div className="form-card">
+                  <h2>Farmer Registration Form</h2>
+                  <p className="status">
+                    Status: {navigator.onLine ? "Online" : "Offline"}
+                  </p>
 
-          <OnboardForm onSaved={refreshPending} />
-        </div>
+                  <OnboardForm onSaved={refreshPending} />
+                </div>
 
-        <div className="pending-section">
-          <h3>Pending Submissions</h3>
+                <div className="pending-section">
+                  <h3>Pending Submissions</h3>
 
-          {pending.length === 0 ? (
-            <p>No pending records</p>
-          ) : (
-            <ul>
-              {pending.map((item) => (
-                <li key={item.id}>
-                  <strong>{item.name}</strong> — {item.num_trees} trees —
-                  {item.status}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
+                  {pending.length === 0 ? (
+                    <p>No pending records</p>
+                  ) : (
+                    <ul>
+                      {pending.map((item) => (
+                        <li key={item.id}>
+                          <strong>{item.name}</strong> — {item.num_trees} trees —
+                          {item.status}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </>
+          }
+        />
+
+        {/* HELP PAGE */}
+        <Route path="/help" element={<Help />} />
+      </Routes>
 
       <Footer />
-    </>
+    </Router>
   );
 }
 
